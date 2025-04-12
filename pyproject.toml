@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "beautools"
+version = "1.1.0"
+description = "Cool beautiful tools for python."
+authors = [{name = "Dmitor cel Mare", email = "dmeety@yandex.ru"}]
+dependencies = [
+    "sqlalchemy",
+    "PyYAML",
+    "yamlordereddictloader"
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]  # Only for development
+
+[tool.hatch.build.targets.sdist]
+include = ["beautools"] #, "tests", "README.md", "LICENSE"]
