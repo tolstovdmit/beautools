@@ -1,7 +1,9 @@
+import asyncio
 import functools
 import logging
 import time
 import traceback
+from .utils import to_async
 
 
 
@@ -63,6 +65,15 @@ def a_log_execution_time(func, level=logging.INFO):
     return wrapper
 
 
+import threading
+
+
+
+# Create a thread-local storage object
+thread_local = threading.local()
+thread_local.call_indent = 0
+
+
 # F = func
 # F(args)
 # G = gunc -> Callable
@@ -71,20 +82,40 @@ def a_log_execution_time(func, level=logging.INFO):
 # G_F = gunc(func)
 #
 def log_call(level=logging.INFO, logger=logging.getLogger()):
-    def decorator(func):
-        @functools.wraps(func)
-        async def wrapper(*args, **kwargs):
-            logger.log(level, f"{func.__name__} Start")
-            try:
-                res = await func(*args, **kwargs)
-                logger.log(level, f"{func.__name__} Finish")
-                return res
-            except:
-                logger.error(f"{func.__name__} Error")
-                raise
-        
-        
-        return wrapper
+    def actual_decorator(func):
+        if asyncio.iscoroutinefunction(func):
+            @functools.wraps(func)
+            async def wrapper(*args, **kwargs):
+                w = 8
+                i = thread_local.call_indent * w
+                thread_local.call_indent += 1
+                logger.log(level, f"{i * ' '}{func.__name__} Start")
+                try:
+                    res = await to_async(func, *args, **kwargs)
+                    logger.log(level, f"{i * ' '}{func.__name__} Finish")
+                    return res
+                except:
+                    logger.error(f"{i * ' '}{func.__name__} Error")
+                    raise
+                finally:
+                    thread_local.call_indent -= 1
+            
+            
+            return wrapper
+        else:
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                logger.log(level, f"{func.__name__} Start")
+                try:
+                    res = func(*args, **kwargs)
+                    logger.log(level, f"{func.__name__} Finish")
+                    return res
+                except:
+                    logger.error(f"{func.__name__} Error")
+                    raise
+            
+            
+            return wrapper
     
     
-    return decorator
+    return actual_decorator

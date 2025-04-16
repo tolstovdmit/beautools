@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "beautools"
-version = "1.1.0"
+version = "1.2.0"
 description = "Cool beautiful tools for python."
-authors = [{name = "Dmitor cel Mare", email = "dmeety@yandex.ru"}]
+authors = [{ name = "Dmitor cel Mare", email = "dmeety@yandex.ru" }]
 dependencies = [
     "sqlalchemy",
     "PyYAML",

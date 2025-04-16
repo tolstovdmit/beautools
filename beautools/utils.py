@@ -1,3 +1,7 @@
+import asyncio
+
+
+
 def _Raise_if_len0(lst, err_text):
     if len(lst) == 0:
         raise Exception(err_text)
@@ -71,3 +75,10 @@ def merge(D1s: dict, *D2s: dict):
     
     for D2n in D2s:
         merge_two(D1s, D2n)
+
+
+async def to_async(func, *args, **kwargs):
+    if asyncio.iscoroutinefunction(func):
+        return await func(*args, **kwargs)
+    else:
+        return func(*args, **kwargs)
