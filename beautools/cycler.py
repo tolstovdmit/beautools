@@ -6,20 +6,20 @@ import traceback
 
 
 class Cycler:
-    def __init__(self, name, cycled_func, DEFAULT_SLEEP=1, WAS_WORK_SLEEP=1, ERROR_SLEEP=1 * 60):
+    def __init__(self, name, async_cycled_func=None, DEFAULT_SLEEP=1, WAS_WORK_SLEEP=1, ERROR_SLEEP=1 * 60):
         self.name = name
-        if cycled_func is not None:
-            self.cycled_func = cycled_func
+        if async_cycled_func is not None:
+            self.async_cycled_func = async_cycled_func
         self.DEFAULT_SLEEP = DEFAULT_SLEEP
         self.WAS_WORK_SLEEP = WAS_WORK_SLEEP
         self.ERROR_SLEEP = ERROR_SLEEP
     
     
-    def cycle(self):
+    def run(self):
         
         i = 1
         while True:
-            print(f"{self.name}: Cycle {i}")
+            logging.info(f"{self.name}: Cycle {i}")
             wasWork = False
             sleep_time = self.DEFAULT_SLEEP
             try:
@@ -27,10 +27,11 @@ class Cycler:
                 if wasWork:
                     sleep_time = self.WAS_WORK_SLEEP
             except Exception as e:
-                print(e)
-                print(traceback.format_exc())
+                logging.error(e)
+                logging.error(traceback.format_exc())
                 sleep_time = self.ERROR_SLEEP
             
+            logging.info(f"{self.name}: Cycle {i} completed. Sleeping for {sleep_time} sec")
             time.sleep(sleep_time)
             i += 1
     
