@@ -1,5 +1,7 @@
 import asyncio
 
+from datetime import datetime, time, timedelta
+
 
 
 def _Raise_if_len0(lst, err_text):
@@ -82,3 +84,9 @@ async def to_async(func, *args, **kwargs):
         return await func(*args, **kwargs)
     else:
         return func(*args, **kwargs)
+
+
+def normalize_time(hour: int, minute: int) -> str:
+    base_time = datetime(2000, 1, 1, 0, 0)  # arbitrary date
+    shifted_time = base_time + timedelta(hours=hour, minutes=minute)
+    return shifted_time.time()
