@@ -84,12 +84,17 @@ class RepoBase:
         for arg in args:
             self.curr_session.merge(arg)
     
+    async def update(self, *args):
+        if not self.curr_session:
+            raise RuntimeError("No active session. Use 'async with repo:'")
+        for arg in args:
+            await  self.curr_session.merge(arg)
     
     async def upsert(self, *args):
         if not self.curr_session:
             raise RuntimeError("No active session. Use 'async with repo:'")
         for arg in args:
-            self.curr_session.merge(arg)
+            await  self.curr_session.merge(arg)
     
     
     async def delete(self, *args):
